@@ -29,14 +29,21 @@ camera = new PerspectiveCamera(75, aspectRatio.value, 0.1, 1000);
 camera.position.z = 5;
 scene.add(camera);
 
+const loop = () => {
+    renderer.render(scene, camera);
+    requestAnimationFrame(loop);
+}
+
 onMounted(() => {
     renderer = new WebGLRenderer({
         canvas: experience.value as unknown as HTMLCanvasElement,
         antialias: true
     });
 
-    renderer.setSize(width.value, height.value);
-    renderer.render(scene, camera);
+    updateRenderer();
+    updateCamera();
+
+    loop();
 });
 
 
