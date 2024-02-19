@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "antfu.iconify",
+    "antfu.unocss",
+    "lokalise.i18n-ally",
+    "dbaeumer.vscode-eslint",
+    "voorjaar.windicss-intellisense",
+    "csstools.postcss"
+  ]
+}
