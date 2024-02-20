@@ -10,6 +10,7 @@ let camera: PerspectiveCamera;
 let controls: OrbitControls;
 let loadedMesh: Mesh;
 const experience = ref<HTMLCanvasElement | null>(null);
+const fileRef = ref<HTMLInputElement | null>(null);
 const scene = new Scene();
 const loader = new STLLoader();
 const light = new AmbientLight(0x404040);
@@ -29,9 +30,21 @@ function updateCamera() {
 }
 
 
-function loadSTLModel() {
+function handleFileUpload() {
+    const fileLoaded = fileRef?.value?.files?.[0];
+
+    if(!fileLoaded) return;
+
+    let reader = new FileReader();
+    reader.onload = (event) => {
+        if (event?.target?.result) loadSTLModel(event?.target?.result as string);
+    }
+
+    reader.readAsDataURL(fileLoaded);
+}
+function loadSTLModel(fileBase64: string) {
     loader.load(
-        '/assets/models/snorlax.stl',
+        fileBase64,
         (geometry) => {
 /*             const boxGeometry = new BoxGeometry(
                 1, 1, 1
@@ -61,7 +74,7 @@ function loadSTLModel() {
 
         },
         (xhr) => {
-            console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+            console.log('loading')
         },
         (error) => {
             console.log(error)
@@ -104,7 +117,8 @@ onMounted(() => {
     <div class="w-screen absolute text-white text-center top-2/4" style="transform: translateY(-50%);">
 		<h1 class="font-mono font-bold text-3xl tracking-wide">Iru Hernandez</h1>
 		<p class="font-exo font-bold text-6xl">Vue 3 + ThreeJS Visualizer</p>
-        <button class="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center font-mono font-bold text-xl tracking-wide" @click="loadSTLModel">Load STL model</button>
+        <button v-if="fileRef" @click="fileRef.click()" class="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center font-mono font-bold text-xl tracking-wide">Load STL model</button>
+        <input ref="fileRef" type="file" class="hidden" @change="handleFileUpload()">
 	</div>
   <canvas ref="experience" />
 </template>
