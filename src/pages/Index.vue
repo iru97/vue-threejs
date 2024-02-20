@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { AmbientLight, Color, Mesh, MeshPhysicalMaterial, PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import { AmbientLight, Box3, Color, Mesh, MeshPhysicalMaterial, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 import { useWindowSize } from '@vueuse/core';
@@ -55,7 +55,7 @@ function loadSTLModel(fileBase64: string) {
                 metalness: 0.25,
                 roughness: 0.1,
                 opacity: 1.0,
-                transparent: true,
+                transparent: false,
                 transmission: 0.99,
                 clearcoat: 1.0,
                 clearcoatRoughness: 0.25
@@ -64,9 +64,24 @@ function loadSTLModel(fileBase64: string) {
             /* const mesh = new Mesh(boxGeometry, new MeshBasicMaterial({color: 0x09FF95})); */
             loadedMesh = new Mesh(geometry, material);
             /* const mesh = new Mesh(geometry, new MeshLambertMaterial({color: 0x0ff00})); */
-            loadedMesh.scale.set(0.1, 0.1, 0.1);
-            loadedMesh.position.set(-10, -2, 0);
-            loadedMesh.rotation.x = -Math.PI / 2;
+            /*loadedMesh.scale.set(0.1, 0.1, 0.1);
+             loadedMesh.position.set(-10, -2, 0);*/ 
+            loadedMesh.rotation.x = Math.PI / 2;
+
+            const box = new Box3();
+            box.setFromObject(loadedMesh);
+
+            const size = new Vector3();
+            box.getSize(size);
+
+            const center = new Vector3();
+            box.getCenter(center);
+        
+            const scaleTemp = new Vector3().copy({x:1,y:1, z:1}).divide(size);
+            const scale = Math.min(scaleTemp.x, Math.min(scaleTemp.y, scaleTemp.z));
+            loadedMesh.scale.setScalar(scale);
+
+            loadedMesh.position.sub(center.multiplyScalar(scale));
 
             scene.add(loadedMesh);
 
@@ -86,11 +101,15 @@ watch(aspectRatio, updateRenderer);
 watch(aspectRatio, updateCamera);
 
 camera = new PerspectiveCamera(75, aspectRatio.value, 0.1, 1000);
-camera.position.z = 10;
+camera.position.z = 5;
 scene.add(camera);
 light.position.set(20, 20, 20)
 scene.add(light);
 scene.background = new Color(0x4c61d4);
+scene.traverse(object => {
+    object.frustumCulled = false;
+});
+
 const loop = () => {
     controls.update();
     renderer.render(scene, camera);
@@ -114,7 +133,7 @@ onMounted(() => {
 
 </script>
 <template>
-    <div class="w-screen absolute text-white text-center top-2/4" style="transform: translateY(-50%);">
+    <div class="w-screen absolute text-white text-center top-1/4" style="transform: translateY(-50%);">
 		<h1 class="font-mono font-bold text-3xl tracking-wide">Iru Hernandez</h1>
 		<p class="font-exo font-bold text-6xl">Vue 3 + ThreeJS Visualizer</p>
         <button v-if="fileRef" @click="fileRef.click()" class="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center font-mono font-bold text-xl tracking-wide">Load STL model</button>
