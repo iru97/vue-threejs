@@ -51,14 +51,15 @@ function loadSTLModel(fileBase64: string) {
             ); */
 
             const material = new MeshPhysicalMaterial({
-                color: 0xb2ffc8,
+                color: 0xe070ff,
                 metalness: 0.25,
                 roughness: 0.1,
                 opacity: 1.0,
                 transparent: false,
                 transmission: 0.99,
                 clearcoat: 1.0,
-                clearcoatRoughness: 0.25
+                clearcoatRoughness: 0.25,
+                fog: true
             });
             if (loadedMesh) scene.remove(loadedMesh);
             /* const mesh = new Mesh(boxGeometry, new MeshBasicMaterial({color: 0x09FF95})); */
@@ -66,7 +67,7 @@ function loadSTLModel(fileBase64: string) {
             /* const mesh = new Mesh(geometry, new MeshLambertMaterial({color: 0x0ff00})); */
             /*loadedMesh.scale.set(0.1, 0.1, 0.1);
              loadedMesh.position.set(-10, -2, 0);*/ 
-            loadedMesh.rotation.x = Math.PI / 2;
+            loadedMesh.rotation.x = -Math.PI / 2;
 
             const box = new Box3();
             box.setFromObject(loadedMesh);
@@ -77,7 +78,7 @@ function loadSTLModel(fileBase64: string) {
             const center = new Vector3();
             box.getCenter(center);
         
-            const scaleTemp = new Vector3().copy({x:1,y:1, z:1}).divide(size);
+            const scaleTemp = new Vector3().copy({x:3,y:3, z:3}).divide(size);
             const scale = Math.min(scaleTemp.x, Math.min(scaleTemp.y, scaleTemp.z));
             loadedMesh.scale.setScalar(scale);
 
