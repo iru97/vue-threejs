@@ -137,7 +137,7 @@ onMounted(() => {
     <div class="w-screen absolute text-white text-center top-1/4" style="transform: translateY(-50%);">
 		<h1 class="font-mono font-bold text-3xl tracking-wide">Iru Hernandez</h1>
 		<p class="font-exo font-bold text-6xl">Vue 3 + ThreeJS Visualizer</p>
-        <button v-if="fileRef" @click="fileRef.click()" class="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center font-mono font-bold text-xl tracking-wide">Load STL model</button>
+        <button v-if="fileRef" @click="fileRef?.click()" class="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center font-mono font-bold text-xl tracking-wide">Load STL model</button>
         <input ref="fileRef" type="file" class="hidden" @change="handleFileUpload()">
 	</div>
   <canvas ref="experience" />
