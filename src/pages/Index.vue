@@ -30,6 +30,21 @@ function updateCamera() {
 }
 
 
+async function getModel() {
+    const responseModel = await fetch("https://myohub.github.io/myosuite_demo/examples/scenes/myo_sim/meshes/human_lowpoly_norighthand.stl", {
+        "method": "GET"
+    });
+
+    if(!responseModel.ok) return;
+
+    let reader = new FileReader();
+    reader.onload = (event) => {
+        if (event?.target?.result) loadSTLModel(event?.target?.result as string);
+    }
+    const responseBlob = await responseModel.blob();
+    reader.readAsDataURL(responseBlob);
+}
+
 function handleFileUpload() {
     const fileLoaded = fileRef?.value?.files?.[0];
 
@@ -42,6 +57,7 @@ function handleFileUpload() {
 
     reader.readAsDataURL(fileLoaded);
 }
+
 function loadSTLModel(fileBase64: string) {
     loader.load(
         fileBase64,
@@ -137,7 +153,8 @@ onMounted(() => {
     <div class="w-screen absolute text-white text-center top-1/4" style="transform: translateY(-50%);">
 		<h1 class="font-mono font-bold text-3xl tracking-wide">Iru Hernandez</h1>
 		<p class="font-exo font-bold text-6xl">Vue 3 + ThreeJS Visualizer</p>
-        <button v-if="fileRef" @click="fileRef?.click()" class="mt-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center font-mono font-bold text-xl tracking-wide">Load STL model</button>
+        <button v-if="fileRef" @click="fileRef?.click()" class="m-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center font-mono font-bold text-xl tracking-wide">Load STL model</button>
+        <button @click="getModel" class="m-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center font-mono font-bold text-xl tracking-wide">Get model</button>
         <input ref="fileRef" type="file" class="hidden" @change="handleFileUpload()">
 	</div>
   <canvas ref="experience" />
